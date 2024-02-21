@@ -5,11 +5,17 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * SnowFlakePanel class
+ */
 class SnowflakePanel extends JPanel implements ActionListener {
     private ArrayList<Snowflake> snowflakes;
     private Timer timer;
     private Random random;
 
+    /**
+     * Constructor, constrcuts a new instance of a Snowflake Panel
+     */
     public SnowflakePanel() {
         setBackground(Color.WHITE);
         snowflakes = new ArrayList<>();
@@ -19,12 +25,18 @@ class SnowflakePanel extends JPanel implements ActionListener {
 
     }
 
+    /**
+     * Adds a new snowflake
+     */
     public void addRandomSnowflake() {
         int x = random.nextInt(getWidth());
         int y = -5;
         snowflakes.add(new Snowflake(x, y));
     }
 
+    /**
+     * moveSnowFlakes()
+     */
     public void moveSnowflakes() {
         for (Snowflake snowflake : snowflakes) {
             snowflake.fall(1);
@@ -34,6 +46,10 @@ class SnowflakePanel extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * overridden paintComponent() method
+     * @param g the <code>Graphics</code> object to protect
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -42,6 +58,10 @@ class SnowflakePanel extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * overridgen actionPerformed() method
+     * @param e the event to be processed
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         addRandomSnowflake();

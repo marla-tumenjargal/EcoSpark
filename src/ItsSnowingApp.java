@@ -1,16 +1,19 @@
 import javax.swing.*;
 
+/**
+ * Main class "ItsSnowingApp" shows the output of the snowflakes
+ */
 public class ItsSnowingApp extends JFrame {
-    public ItsSnowingApp() {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(300, 300);
-
-        SnowflakePanel snowflakePanel = new SnowflakePanel();
-        add(snowflakePanel);
-        setVisible(true);
-    }
-
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new ItsSnowingApp());
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Its Snowing!");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(300, 300);
+
+            SnowflakePanel snowflakePanel = new SnowflakePanel();
+            frame.add(snowflakePanel);
+
+            frame.setVisible(true);
+        });
     }
 }
