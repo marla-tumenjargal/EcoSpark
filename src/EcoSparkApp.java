@@ -1,488 +1,640 @@
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.HashMap;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-public class EcoSparkApp {
-
-    private JFrame frame;
+public class EcoSparkApp extends JFrame {
+    private Profile currentUser;
     private JPanel mainPanel;
     private CardLayout cardLayout;
 
-    private String currentUser = null;
-    // Store user credentials (email -> password)
-    private Map<String, String> userCredentials = new HashMap<>();
-    // Store user names (email -> name)
-    private Map<String, String> userNames = new HashMap<>();
-    // Store user task completion status (email_taskId -> completed)
-    private Map<String, Boolean> taskCompletionStatus = new HashMap<>();
+    // Panels
+    private JPanel loginPanel;
+    private JPanel registerPanel;
+    private JPanel dashboardPanel;
+    private JPanel profilePanel;
+    private JPanel tasksPanel;
+    private JPanel carbonFootprintPanel;
+    private JPanel quizPanel;
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new EcoSparkApp().initialize());
-    }
+    public EcoSparkApp() {
+        // Set up the main window
+        setTitle("EcoSpark");
+        setSize(800, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
 
-    private void initialize() {
-        frame = new JFrame("EcoSpark");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 400);
-
-        mainPanel = new JPanel();
+        // Initialize panels
         cardLayout = new CardLayout();
-        mainPanel.setLayout(cardLayout);
+        mainPanel = new JPanel(cardLayout);
 
+        // Create and add panels
         createLoginPanel();
         createRegisterPanel();
         createDashboardPanel();
+        createProfilePanel();
         createTasksPanel();
+        createCarbonFootprintPanel();
         createQuizPanel();
 
-        frame.add(mainPanel);
-        frame.setVisible(true);
+        // Add panels to main panel
+        mainPanel.add(loginPanel, "login");
+        mainPanel.add(registerPanel, "register");
+        mainPanel.add(dashboardPanel, "dashboard");
+        mainPanel.add(profilePanel, "profile");
+        mainPanel.add(tasksPanel, "tasks");
+        mainPanel.add(carbonFootprintPanel, "carbonFootprint");
+        mainPanel.add(quizPanel, "quiz");
 
-        // Start with login screen
+        // Show login panel first
         cardLayout.show(mainPanel, "login");
+
+        // Add main panel to frame
+        add(mainPanel);
     }
 
+    // Create the login panel
     private void createLoginPanel() {
-        JPanel loginPanel = new JPanel();
+        loginPanel = new JPanel();
         loginPanel.setLayout(new BoxLayout(loginPanel, BoxLayout.Y_AXIS));
         loginPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
+        loginPanel.setBackground(new Color(240, 248, 255)); // Light blue background
 
+        // Title
         JLabel titleLabel = new JLabel("Login to EcoSpark");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // Email field
         JPanel emailPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel emailLabel = new JLabel("Email:");
         JTextField emailField = new JTextField(20);
         emailPanel.add(emailLabel);
         emailPanel.add(emailField);
 
+        // Password field
         JPanel passwordPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel passwordLabel = new JLabel("Password:");
         JPasswordField passwordField = new JPasswordField(20);
         passwordPanel.add(passwordLabel);
         passwordPanel.add(passwordField);
 
+        // Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton loginButton = new JButton("Login");
-        JButton registerRedirectButton = new JButton("Register New Account");
-
+        JButton registerButton = new JButton("Register");
         buttonPanel.add(loginButton);
-        buttonPanel.add(registerRedirectButton);
+        buttonPanel.add(registerButton);
 
+        // Status message
         JLabel statusLabel = new JLabel(" ");
         statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // Add components to login panel
+        loginPanel.add(Box.createVerticalStrut(20));
+        loginPanel.add(titleLabel);
+        loginPanel.add(Box.createVerticalStrut(30));
+        loginPanel.add(emailPanel);
+        loginPanel.add(Box.createVerticalStrut(10));
+        loginPanel.add(passwordPanel);
+        loginPanel.add(Box.createVerticalStrut(20));
+        loginPanel.add(buttonPanel);
+        loginPanel.add(Box.createVerticalStrut(20));
+        loginPanel.add(statusLabel);
+
+        // Login button action
         loginButton.addActionListener(e -> {
             String email = emailField.getText();
             String password = new String(passwordField.getPassword());
 
-            if (email.isEmpty() || password.isEmpty()) {
-                statusLabel.setText("Please enter email and password");
-                statusLabel.setForeground(Color.RED);
-                return;
-            }
-
-            // Check credentials
-            if (userCredentials.containsKey(email) && userCredentials.get(email).equals(password)) {
-                statusLabel.setText("Login successful!");
+            // Simulate login (replace with actual backend logic)
+            if (email.equals("user@example.com") && password.equals("password")) {
+                currentUser = new Profile(email, password, "John Doe", 25, "Male");
+                statusLabel.setText("Login successful! Redirecting...");
                 statusLabel.setForeground(Color.GREEN);
-                currentUser = email;
 
-                // Update welcome message
-                updateWelcomeMessage();
+                // Clear fields
+                emailField.setText("");
+                passwordField.setText("");
 
-                // Switch to dashboard after a short delay
-                Timer timer = new Timer(1000, new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e1) {
-                        cardLayout.show(mainPanel, "dashboard");
-
-                        // Clear fields for next login
-                        emailField.setText("");
-                        passwordField.setText("");
-                        statusLabel.setText(" ");
-                    }
-                });
-                timer.setRepeats(false);
-                timer.start();
+                // Switch to dashboard
+                cardLayout.show(mainPanel, "dashboard");
             } else {
-                statusLabel.setText("Invalid email or password");
+                statusLabel.setText("Login failed. Please check your credentials.");
                 statusLabel.setForeground(Color.RED);
             }
         });
 
-        registerRedirectButton.addActionListener(e -> {
-            emailField.setText("");
-            passwordField.setText("");
-            statusLabel.setText(" ");
-            cardLayout.show(mainPanel, "register");
-        });
-
-        loginPanel.add(titleLabel);
-        loginPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        loginPanel.add(emailPanel);
-        loginPanel.add(passwordPanel);
-        loginPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        loginPanel.add(buttonPanel);
-        loginPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        loginPanel.add(statusLabel);
-
-        mainPanel.add(loginPanel, "login");
+        // Register button action
+        registerButton.addActionListener(e -> cardLayout.show(mainPanel, "register"));
     }
 
+    // Create the register panel
     private void createRegisterPanel() {
-        JPanel registerPanel = new JPanel();
+        registerPanel = new JPanel();
         registerPanel.setLayout(new BoxLayout(registerPanel, BoxLayout.Y_AXIS));
         registerPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
+        registerPanel.setBackground(new Color(240, 248, 255)); // Light blue background
 
+        // Title
         JLabel titleLabel = new JLabel("Register for EcoSpark");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JPanel emailPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel emailLabel = new JLabel("Email:");
-        JTextField emailField = new JTextField(20);
-        emailPanel.add(emailLabel);
-        emailPanel.add(emailField);
-
-        JPanel passwordPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel passwordLabel = new JLabel("Password:");
-        JPasswordField passwordField = new JPasswordField(20);
-        passwordPanel.add(passwordLabel);
-        passwordPanel.add(passwordField);
-
+        // Name field
         JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel nameLabel = new JLabel("Name:");
         JTextField nameField = new JTextField(20);
         namePanel.add(nameLabel);
         namePanel.add(nameField);
 
-        JPanel agePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel ageLabel = new JLabel("Age:");
-        JTextField ageField = new JTextField(5);
-        agePanel.add(ageLabel);
-        agePanel.add(ageField);
+        // Email field
+        JPanel emailPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel emailLabel = new JLabel("Email:");
+        JTextField emailField = new JTextField(20);
+        emailPanel.add(emailLabel);
+        emailPanel.add(emailField);
 
-        JPanel genderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel genderLabel = new JLabel("Gender:");
-        JComboBox<String> genderComboBox = new JComboBox<>(new String[]{"Male", "Female", "Other"});
-        genderPanel.add(genderLabel);
-        genderPanel.add(genderComboBox);
+        // Password field
+        JPanel passwordPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel passwordLabel = new JLabel("Password:");
+        JPasswordField passwordField = new JPasswordField(20);
+        passwordPanel.add(passwordLabel);
+        passwordPanel.add(passwordField);
 
+        // Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton registerButton = new JButton("Register");
-        JButton loginRedirectButton = new JButton("Back to Login");
-
+        JButton backButton = new JButton("Back to Login");
         buttonPanel.add(registerButton);
-        buttonPanel.add(loginRedirectButton);
+        buttonPanel.add(backButton);
 
+        // Status message
         JLabel statusLabel = new JLabel(" ");
         statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // Add components to register panel
+        registerPanel.add(Box.createVerticalStrut(20));
+        registerPanel.add(titleLabel);
+        registerPanel.add(Box.createVerticalStrut(30));
+        registerPanel.add(namePanel);
+        registerPanel.add(Box.createVerticalStrut(10));
+        registerPanel.add(emailPanel);
+        registerPanel.add(Box.createVerticalStrut(10));
+        registerPanel.add(passwordPanel);
+        registerPanel.add(Box.createVerticalStrut(20));
+        registerPanel.add(buttonPanel);
+        registerPanel.add(Box.createVerticalStrut(20));
+        registerPanel.add(statusLabel);
+
+        // Register button action
         registerButton.addActionListener(e -> {
+            String name = nameField.getText();
             String email = emailField.getText();
             String password = new String(passwordField.getPassword());
-            String name = nameField.getText();
-            String ageText = ageField.getText();
-            String gender = (String) genderComboBox.getSelectedItem();
 
-            if (email.isEmpty() || password.isEmpty() || name.isEmpty() || ageText.isEmpty()) {
-                statusLabel.setText("Please fill all fields");
-                statusLabel.setForeground(Color.RED);
-                return;
-            }
-
-            if (userCredentials.containsKey(email)) {
-                statusLabel.setText("Email already registered");
-                statusLabel.setForeground(Color.RED);
-                return;
-            }
-
-            try {
-                int age = Integer.parseInt(ageText);
-
-                // Store the user details
-                userCredentials.put(email, password);
-                userNames.put(email, name);
-
-                statusLabel.setText("Registration successful! You can now login.");
+            // Simulate registration (replace with actual backend logic)
+            if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty()) {
+                currentUser = new Profile(email, password, name, 25, "Male");
+                statusLabel.setText("Registration successful! Redirecting...");
                 statusLabel.setForeground(Color.GREEN);
 
                 // Clear fields
+                nameField.setText("");
                 emailField.setText("");
                 passwordField.setText("");
-                nameField.setText("");
-                ageField.setText("");
 
-                // Switch to login after a short delay
-                Timer timer = new Timer(2000, new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e1) {
-                        cardLayout.show(mainPanel, "login");
-                        statusLabel.setText(" ");
-                    }
-                });
-                timer.setRepeats(false);
-                timer.start();
-
-            } catch (NumberFormatException ex) {
-                statusLabel.setText("Age must be a valid number");
+                // Switch to dashboard
+                cardLayout.show(mainPanel, "dashboard");
+            } else {
+                statusLabel.setText("Registration failed. Please fill in all fields.");
                 statusLabel.setForeground(Color.RED);
             }
         });
 
-        loginRedirectButton.addActionListener(e -> {
-            emailField.setText("");
-            passwordField.setText("");
-            nameField.setText("");
-            ageField.setText("");
-            statusLabel.setText(" ");
-            cardLayout.show(mainPanel, "login");
-        });
-
-        registerPanel.add(titleLabel);
-        registerPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        registerPanel.add(emailPanel);
-        registerPanel.add(passwordPanel);
-        registerPanel.add(namePanel);
-        registerPanel.add(agePanel);
-        registerPanel.add(genderPanel);
-        registerPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        registerPanel.add(buttonPanel);
-        registerPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        registerPanel.add(statusLabel);
-
-        mainPanel.add(registerPanel, "register");
+        // Back button action
+        backButton.addActionListener(e -> cardLayout.show(mainPanel, "login"));
     }
 
-    private JLabel welcomeLabel;
-
-    private void updateWelcomeMessage() {
-        if (currentUser != null && userNames.containsKey(currentUser)) {
-            welcomeLabel.setText("Welcome, " + userNames.get(currentUser) + "!");
-        } else {
-            welcomeLabel.setText("Welcome to EcoSpark!");
-        }
-    }
-
+    // Create the dashboard panel
     private void createDashboardPanel() {
-        JPanel dashboardPanel = new JPanel(new BorderLayout());
-        dashboardPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        dashboardPanel = new JPanel();
+        dashboardPanel.setLayout(new BoxLayout(dashboardPanel, BoxLayout.Y_AXIS));
+        dashboardPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
+        dashboardPanel.setBackground(new Color(240, 248, 255)); // Light blue background
 
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        welcomeLabel = new JLabel("Welcome to EcoSpark!");
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        headerPanel.add(welcomeLabel, BorderLayout.WEST);
+        // Title
+        JLabel titleLabel = new JLabel("Welcome to EcoSpark, " + (currentUser != null ? currentUser.getName() : "User") + "!");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // Buttons
+        JButton profileButton = new JButton("Edit Profile");
+        JButton tasksButton = new JButton("View Tasks");
+        JButton carbonFootprintButton = new JButton("Calculate Carbon Footprint");
+        JButton quizButton = new JButton("Take Quiz");
         JButton logoutButton = new JButton("Logout");
+
+        // Add components to dashboard panel
+        dashboardPanel.add(Box.createVerticalStrut(20));
+        dashboardPanel.add(titleLabel);
+        dashboardPanel.add(Box.createVerticalStrut(30));
+        dashboardPanel.add(profileButton);
+        dashboardPanel.add(Box.createVerticalStrut(10));
+        dashboardPanel.add(tasksButton);
+        dashboardPanel.add(Box.createVerticalStrut(10));
+        dashboardPanel.add(carbonFootprintButton);
+        dashboardPanel.add(Box.createVerticalStrut(10));
+        dashboardPanel.add(quizButton);
+        dashboardPanel.add(Box.createVerticalStrut(20));
+        dashboardPanel.add(logoutButton);
+
+        // Button actions
+        profileButton.addActionListener(e -> cardLayout.show(mainPanel, "profile"));
+        tasksButton.addActionListener(e -> cardLayout.show(mainPanel, "tasks"));
+        carbonFootprintButton.addActionListener(e -> cardLayout.show(mainPanel, "carbonFootprint"));
+        quizButton.addActionListener(e -> cardLayout.show(mainPanel, "quiz"));
         logoutButton.addActionListener(e -> {
             currentUser = null;
-            cardLayout.show(mainPanel, "login"); // Navigate to the login page after logout
+            cardLayout.show(mainPanel, "login");
         });
-        headerPanel.add(logoutButton, BorderLayout.EAST);
-
-        JPanel menuPanel = new JPanel(new GridLayout(4, 1, 10, 10));
-        menuPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        JButton profileButton = new JButton("My Profile");
-        JButton tasksButton = new JButton("Eco Tasks");
-        JButton quizButton = new JButton("Take Quiz");
-        JButton carbonFootprintButton = new JButton("Calculate Carbon Footprint");
-
-        profileButton.addActionListener(e -> {
-            // You can implement profile functionality here
-            JOptionPane.showMessageDialog(frame, "Profile functionality coming soon!");
-        });
-
-        tasksButton.addActionListener(e -> {
-            refreshTasksPanel(); // Refresh tasks before showing
-            cardLayout.show(mainPanel, "tasks");
-        });
-
-        quizButton.addActionListener(e -> cardLayout.show(mainPanel, "quiz"));
-
-        carbonFootprintButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(frame, "Carbon footprint calculator coming soon!");
-        });
-
-        menuPanel.add(profileButton);
-        menuPanel.add(tasksButton);
-        menuPanel.add(quizButton);
-        menuPanel.add(carbonFootprintButton);
-
-        dashboardPanel.add(headerPanel, BorderLayout.NORTH);
-        dashboardPanel.add(menuPanel, BorderLayout.CENTER);
-
-        mainPanel.add(dashboardPanel, "dashboard");
     }
 
-    private JPanel tasksListPanel;
+    // Create the profile panel
+    private void createProfilePanel() {
+        profilePanel = new JPanel();
+        profilePanel.setLayout(new BoxLayout(profilePanel, BoxLayout.Y_AXIS));
+        profilePanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
+        profilePanel.setBackground(new Color(240, 248, 255)); // Light blue background
 
-    private void createTasksPanel() {
-        JPanel tasksPanel = new JPanel(new BorderLayout());
-        tasksPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        // Title
+        JLabel titleLabel = new JLabel("Edit Profile");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        JLabel titleLabel = new JLabel("Eco-Friendly Tasks");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        headerPanel.add(titleLabel, BorderLayout.WEST);
+        // Name field
+        JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel nameLabel = new JLabel("Name:");
+        JTextField nameField = new JTextField(20);
+        namePanel.add(nameLabel);
+        namePanel.add(nameField);
 
+        // Email field
+        JPanel emailPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel emailLabel = new JLabel("Email:");
+        JTextField emailField = new JTextField(20);
+        emailPanel.add(emailLabel);
+        emailPanel.add(emailField);
+
+        // Password field
+        JPanel passwordPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel passwordLabel = new JLabel("Password:");
+        JPasswordField passwordField = new JPasswordField(20);
+        passwordPanel.add(passwordLabel);
+        passwordPanel.add(passwordField);
+
+        // Buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton saveButton = new JButton("Save Changes");
         JButton backButton = new JButton("Back to Dashboard");
+        buttonPanel.add(saveButton);
+        buttonPanel.add(backButton);
+
+        // Status message
+        JLabel statusLabel = new JLabel(" ");
+        statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Add components to profile panel
+        profilePanel.add(Box.createVerticalStrut(20));
+        profilePanel.add(titleLabel);
+        profilePanel.add(Box.createVerticalStrut(30));
+        profilePanel.add(namePanel);
+        profilePanel.add(Box.createVerticalStrut(10));
+        profilePanel.add(emailPanel);
+        profilePanel.add(Box.createVerticalStrut(10));
+        profilePanel.add(passwordPanel);
+        profilePanel.add(Box.createVerticalStrut(20));
+        profilePanel.add(buttonPanel);
+        profilePanel.add(Box.createVerticalStrut(20));
+        profilePanel.add(statusLabel);
+
+        // Save button action
+        saveButton.addActionListener(e -> {
+            String name = nameField.getText();
+            String email = emailField.getText();
+            String password = new String(passwordField.getPassword());
+
+            if (currentUser != null) {
+                currentUser.setName(name);
+                currentUser.setEmail(email);
+                currentUser.setPassword(password);
+                statusLabel.setText("Profile updated successfully!");
+                statusLabel.setForeground(Color.GREEN);
+            } else {
+                statusLabel.setText("Error: No user logged in.");
+                statusLabel.setForeground(Color.RED);
+            }
+        });
+
+        // Back button action
         backButton.addActionListener(e -> cardLayout.show(mainPanel, "dashboard"));
-        headerPanel.add(backButton, BorderLayout.EAST);
-
-        tasksListPanel = new JPanel();
-        tasksListPanel.setLayout(new BoxLayout(tasksListPanel, BoxLayout.Y_AXIS));
-
-        JScrollPane scrollPane = new JScrollPane(tasksListPanel);
-        scrollPane.setBorder(BorderFactory.createTitledBorder("Available Tasks"));
-
-        tasksPanel.add(headerPanel, BorderLayout.NORTH);
-        tasksPanel.add(scrollPane, BorderLayout.CENTER);
-
-        mainPanel.add(tasksPanel, "tasks");
     }
 
-    private void refreshTasksPanel() {
-        tasksListPanel.removeAll();
+    // Create the tasks panel
+    private void createTasksPanel() {
+        tasksPanel = new JPanel();
+        tasksPanel.setLayout(new BoxLayout(tasksPanel, BoxLayout.Y_AXIS));
+        tasksPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
+        tasksPanel.setBackground(new Color(240, 248, 255)); // Light blue background
 
-        // Create eco-friendly tasks
-        createTaskItem("task1", "Use reusable bags for grocery shopping", "Replace plastic bags with reusable bags for at least one week");
-        createTaskItem("task2", "Reduce water usage", "Take shorter showers (5 minutes or less) for one week");
-        createTaskItem("task3", "Energy conservation", "Turn off lights and electronics when not in use for a week");
-        createTaskItem("task4", "Sustainable transportation", "Walk, bike, or use public transport instead of driving for 3 days");
-        createTaskItem("task5", "Reduce food waste", "Plan meals to minimize food waste for one week");
-        createTaskItem("task6", "Meatless Monday", "Go vegetarian for a full day to reduce carbon footprint");
-        createTaskItem("task7", "Electronics recycling", "Properly recycle old electronics instead of throwing them away");
-        createTaskItem("task8", "Plant a tree or garden", "Contribute to local biodiversity by planting native species");
-        createTaskItem("task9", "Switch to LED bulbs", "Replace at least 3 conventional light bulbs with LED alternatives");
-        createTaskItem("task10", "Zero waste day", "Go one full day without producing any disposable waste");
-        createTaskItem("task11", "Litter cleanup", "Spend 30 minutes picking up litter in a public place");
-        createTaskItem("task12", "Digital declutter", "Clean up your digital storage to save energy on servers");
+        // Title
+        JLabel titleLabel = new JLabel("Tasks");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        tasksListPanel.revalidate();
-        tasksListPanel.repaint();
-    }
+        // Task list with checkboxes
+        JPanel taskListPanel = new JPanel();
+        taskListPanel.setLayout(new BoxLayout(taskListPanel, BoxLayout.Y_AXIS));
+        JScrollPane scrollPane = new JScrollPane(taskListPanel);
 
-    private void createTaskItem(String taskId, String title, String description) {
-        JPanel taskPanel = new JPanel(new BorderLayout());
-        taskPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY),
-                BorderFactory.createEmptyBorder(10, 5, 10, 5)
-        ));
+        // Long description area
+        JTextArea descriptionArea = new JTextArea(5, 30);
+        descriptionArea.setEditable(false);
+        descriptionArea.setLineWrap(true);
+        descriptionArea.setWrapStyleWord(true);
+        JScrollPane descriptionScrollPane = new JScrollPane(descriptionArea);
 
-        JPanel taskInfoPanel = new JPanel();
-        taskInfoPanel.setLayout(new BoxLayout(taskInfoPanel, BoxLayout.Y_AXIS));
-
-        JLabel taskTitleLabel = new JLabel(title);
-        taskTitleLabel.setFont(new Font("Arial", Font.BOLD, 14));
-
-        JLabel taskDescLabel = new JLabel(description);
-        taskDescLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-
-        taskInfoPanel.add(taskTitleLabel);
-        taskInfoPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        taskInfoPanel.add(taskDescLabel);
-
-        String taskKey = (currentUser != null) ? currentUser + "_" + taskId : taskId;
-        boolean isCompleted = taskCompletionStatus.getOrDefault(taskKey, false);
-
-        JButton actionButton = new JButton(isCompleted ? "Completed" : "Mark as Completed");
-        if (isCompleted) {
-            actionButton.setBackground(new Color(144, 238, 144)); // Light green
-            actionButton.setEnabled(false);
+        // Load tasks
+        List<Task> tasks = Task.createTaskLibrary();
+        for (Task task : tasks) {
+            JCheckBox taskCheckBox = new JCheckBox(task.getTitle());
+            taskCheckBox.addActionListener(e -> {
+                if (taskCheckBox.isSelected()) {
+                    descriptionArea.setText(task.getLongDescription());
+                } else {
+                    descriptionArea.setText("");
+                }
+            });
+            taskListPanel.add(taskCheckBox);
         }
 
-        actionButton.addActionListener(e -> {
-            if (currentUser == null) {
-                JOptionPane.showMessageDialog(frame, "Please log in to track task completion");
-                return;
+        // Complete task button
+        JButton completeTaskButton = new JButton("Complete Selected Task");
+        completeTaskButton.addActionListener(e -> {
+            for (int i = 0; i < tasks.size(); i++) {
+                JCheckBox checkBox = (JCheckBox) taskListPanel.getComponent(i);
+                if (checkBox.isSelected()) {
+                    Task selectedTask = tasks.get(i);
+                    selectedTask.completeTask(currentUser);
+                    JOptionPane.showMessageDialog(tasksPanel, "Task completed! You earned " + selectedTask.getPointsValue() + " points.");
+                    checkBox.setEnabled(false); // Disable checkbox after completion
+                }
             }
-
-            taskCompletionStatus.put(taskKey, true);
-            actionButton.setText("Completed");
-            actionButton.setBackground(new Color(144, 238, 144)); // Light green
-            actionButton.setEnabled(false);
-
-            // Add point system or rewards here if needed
-            JOptionPane.showMessageDialog(frame, "Great job! You've completed this eco-task!");
         });
 
-        taskPanel.add(taskInfoPanel, BorderLayout.CENTER);
-        taskPanel.add(actionButton, BorderLayout.EAST);
+        // Back button
+        JButton backButton = new JButton("Back to Dashboard");
 
-        tasksListPanel.add(taskPanel);
+        // Add components to tasks panel
+        tasksPanel.add(Box.createVerticalStrut(20));
+        tasksPanel.add(titleLabel);
+        tasksPanel.add(Box.createVerticalStrut(30));
+        tasksPanel.add(scrollPane);
+        tasksPanel.add(Box.createVerticalStrut(20));
+        tasksPanel.add(descriptionScrollPane);
+        tasksPanel.add(Box.createVerticalStrut(20));
+        tasksPanel.add(completeTaskButton);
+        tasksPanel.add(Box.createVerticalStrut(10));
+        tasksPanel.add(backButton);
+
+        // Back button action
+        backButton.addActionListener(e -> cardLayout.show(mainPanel, "dashboard"));
     }
 
-    private void createQuizPanel() {
-        JPanel quizPanel = new JPanel(new BorderLayout());
-        quizPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    // Create the carbon footprint panel
+    private void createCarbonFootprintPanel() {
+        carbonFootprintPanel = new JPanel();
+        carbonFootprintPanel.setLayout(new BoxLayout(carbonFootprintPanel, BoxLayout.Y_AXIS));
+        carbonFootprintPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
+        carbonFootprintPanel.setBackground(new Color(240, 248, 255)); // Light blue background
 
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        JLabel titleLabel = new JLabel("Climate Change Knowledge Quiz");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        headerPanel.add(titleLabel, BorderLayout.WEST);
+        // Title
+        JLabel titleLabel = new JLabel("Carbon Footprint Calculator");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // Input fields
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new GridLayout(8, 2, 10, 10));
+        inputPanel.setBackground(new Color(240, 248, 255));
+
+        JLabel electricityLabel = new JLabel("Electricity Usage (kWh):");
+        JTextField electricityField = new JTextField();
+        JLabel gasLabel = new JLabel("Gas Usage (therms):");
+        JTextField gasField = new JTextField();
+        JLabel carMilesLabel = new JLabel("Car Miles Driven:");
+        JTextField carMilesField = new JTextField();
+        JLabel publicTransportLabel = new JLabel("Public Transport Miles:");
+        JTextField publicTransportField = new JTextField();
+        JLabel flightMilesLabel = new JLabel("Flight Miles:");
+        JTextField flightMilesField = new JTextField();
+        JLabel vegetarianLabel = new JLabel("Are you vegetarian? (Yes/No):");
+        JTextField vegetarianField = new JTextField();
+        JLabel meatMealsLabel = new JLabel("Meat Meals per Week:");
+        JTextField meatMealsField = new JTextField();
+        JLabel wasteLabel = new JLabel("Waste Produced (kg):");
+        JTextField wasteField = new JTextField();
+
+        inputPanel.add(electricityLabel);
+        inputPanel.add(electricityField);
+        inputPanel.add(gasLabel);
+        inputPanel.add(gasField);
+        inputPanel.add(carMilesLabel);
+        inputPanel.add(carMilesField);
+        inputPanel.add(publicTransportLabel);
+        inputPanel.add(publicTransportField);
+        inputPanel.add(flightMilesLabel);
+        inputPanel.add(flightMilesField);
+        inputPanel.add(vegetarianLabel);
+        inputPanel.add(vegetarianField);
+        inputPanel.add(meatMealsLabel);
+        inputPanel.add(meatMealsField);
+        inputPanel.add(wasteLabel);
+        inputPanel.add(wasteField);
+
+        // Calculate button
+        JButton calculateButton = new JButton("Calculate Footprint");
+        calculateButton.setBackground(new Color(50, 205, 50)); // Green color
+        calculateButton.setForeground(Color.WHITE);
+        calculateButton.setFont(new Font("Arial", Font.BOLD, 14));
+
+        // Result display
+        JTextArea resultArea = new JTextArea(10, 30);
+        resultArea.setEditable(false);
+        resultArea.setLineWrap(true);
+        resultArea.setWrapStyleWord(true);
+        resultArea.setFont(new Font("Arial", Font.PLAIN, 14));
+        JScrollPane resultScrollPane = new JScrollPane(resultArea);
+
+        // Back button
         JButton backButton = new JButton("Back to Dashboard");
-        backButton.addActionListener(e -> cardLayout.show(mainPanel, "dashboard"));
-        headerPanel.add(backButton, BorderLayout.EAST);
+        backButton.setBackground(new Color(255, 99, 71)); // Tomato color
+        backButton.setForeground(Color.WHITE);
+        backButton.setFont(new Font("Arial", Font.BOLD, 14));
 
-        JPanel quizContentPanel = new JPanel();
-        quizContentPanel.setLayout(new BoxLayout(quizContentPanel, BoxLayout.Y_AXIS));
+        // Add components to carbon footprint panel
+        carbonFootprintPanel.add(Box.createVerticalStrut(20));
+        carbonFootprintPanel.add(titleLabel);
+        carbonFootprintPanel.add(Box.createVerticalStrut(30));
+        carbonFootprintPanel.add(inputPanel);
+        carbonFootprintPanel.add(Box.createVerticalStrut(20));
+        carbonFootprintPanel.add(calculateButton);
+        carbonFootprintPanel.add(Box.createVerticalStrut(20));
+        carbonFootprintPanel.add(resultScrollPane);
+        carbonFootprintPanel.add(Box.createVerticalStrut(20));
+        carbonFootprintPanel.add(backButton);
 
-        JLabel quizInstructionsLabel = new JLabel("Test your knowledge about climate change and its impacts");
-        quizInstructionsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        quizInstructionsLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // Calculate button action
+        calculateButton.addActionListener(e -> {
+            try {
+                double electricityUsage = Double.parseDouble(electricityField.getText());
+                double gasUsage = Double.parseDouble(gasField.getText());
+                double carMiles = Double.parseDouble(carMilesField.getText());
+                double publicTransportMiles = Double.parseDouble(publicTransportField.getText());
+                double flightMiles = Double.parseDouble(flightMilesField.getText());
+                boolean isVegetarian = vegetarianField.getText().equalsIgnoreCase("Yes");
+                int meatMealsPerWeek = Integer.parseInt(meatMealsField.getText());
+                double wasteProduced = Double.parseDouble(wasteField.getText());
 
-        JPanel questionPanel = new JPanel();
-        questionPanel.setLayout(new BoxLayout(questionPanel, BoxLayout.Y_AXIS));
-        questionPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+                CarbonFootprint footprint = new CarbonFootprint();
+                footprint.calculateFootprint(electricityUsage, gasUsage, carMiles, publicTransportMiles, flightMiles, isVegetarian, meatMealsPerWeek, wasteProduced);
 
-        JLabel questionLabel = new JLabel("1. What is the main greenhouse gas contributing to climate change?");
-        questionLabel.setFont(new Font("Arial", Font.BOLD, 14));
-
-        JRadioButton option1 = new JRadioButton("Carbon Dioxide (CO₂)");
-        JRadioButton option2 = new JRadioButton("Oxygen (O₂)");
-        JRadioButton option3 = new JRadioButton("Nitrogen (N₂)");
-        JRadioButton option4 = new JRadioButton("Hydrogen (H₂)");
-
-        ButtonGroup buttonGroup = new ButtonGroup();
-        buttonGroup.add(option1);
-        buttonGroup.add(option2);
-        buttonGroup.add(option3);
-        buttonGroup.add(option4);
-
-        JButton submitButton = new JButton("Submit Answer");
-        submitButton.addActionListener(e -> {
-            if (option1.isSelected()) {
-                JOptionPane.showMessageDialog(frame, "Correct! Carbon dioxide is the primary greenhouse gas contributing to climate change.");
-            } else {
-                JOptionPane.showMessageDialog(frame, "Incorrect. The correct answer is Carbon Dioxide (CO₂).");
+                // Display results
+                resultArea.setText("--- Your Carbon Footprint ---\n" +
+                        "Calculation Date: " + footprint.getCalculationDate() + "\n\n" +
+                        "Breakdown by Category (tons of CO2):\n" +
+                        "Home: " + String.format("%.2f", footprint.getHomeEmissions()) + " tons\n" +
+                        "Transport: " + String.format("%.2f", footprint.getTransportEmissions()) + " tons\n" +
+                        "Food: " + String.format("%.2f", footprint.getFoodEmissions()) + " tons\n" +
+                        "Waste: " + String.format("%.2f", footprint.getWasteEmissions()) + " tons\n\n" +
+                        "Total Emissions: " + String.format("%.2f", footprint.getTotalEmissions()) + " tons of CO2 per year\n\n");
+            } catch (NumberFormatException ex) {
+                resultArea.setText("Invalid input. Please enter numbers only.");
             }
         });
 
-        questionPanel.add(questionLabel);
-        questionPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        questionPanel.add(option1);
-        questionPanel.add(option2);
-        questionPanel.add(option3);
-        questionPanel.add(option4);
-        questionPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        questionPanel.add(submitButton);
+        // Back button action
+        backButton.addActionListener(e -> cardLayout.show(mainPanel, "dashboard"));
+    }
 
-        quizContentPanel.add(quizInstructionsLabel);
-        quizContentPanel.add(questionPanel);
 
-        JScrollPane scrollPane = new JScrollPane(quizContentPanel);
-        scrollPane.setBorder(BorderFactory.createTitledBorder("Questions"));
+    // Create the quiz panel
+    private void createQuizPanel() {
+        quizPanel = new JPanel();
+        quizPanel.setLayout(new BoxLayout(quizPanel, BoxLayout.Y_AXIS));
+        quizPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
+        quizPanel.setBackground(new Color(240, 248, 255)); // Light blue background
 
-        quizPanel.add(headerPanel, BorderLayout.NORTH);
-        quizPanel.add(scrollPane, BorderLayout.CENTER);
+        // Title
+        JLabel titleLabel = new JLabel("Climate Change Quiz");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        mainPanel.add(quizPanel, "quiz");
+        // Question area
+        JLabel questionLabel = new JLabel();
+        questionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Options panel
+        JPanel optionsPanel = new JPanel();
+        optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.Y_AXIS));
+        ButtonGroup optionsGroup = new ButtonGroup();
+        JRadioButton[] optionButtons = new JRadioButton[4];
+
+        // Next question button
+        JButton nextButton = new JButton("Next Question");
+
+        // Result display
+        JLabel resultLabel = new JLabel();
+        resultLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Load quiz
+        Quiz quiz = Quiz.createClimateChangeQuiz();
+
+        // Display first question
+        displayQuestion(quiz, questionLabel, optionsPanel, optionsGroup, optionButtons);
+
+        // Next button action
+        nextButton.addActionListener(e -> {
+            // Check answer
+            for (int i = 0; i < optionButtons.length; i++) {
+                if (optionButtons[i].isSelected()) {
+                    char answer = (char) ('A' + i);
+                    boolean isCorrect = quiz.checkAnswer(answer);
+                    resultLabel.setText(isCorrect ? "Correct!" : "Incorrect!");
+                    break;
+                }
+            }
+
+            // Move to next question
+            if (quiz.nextQuestion()) {
+                displayQuestion(quiz, questionLabel, optionsPanel, optionsGroup, optionButtons);
+            } else {
+                JOptionPane.showMessageDialog(quizPanel, "Quiz completed!");
+                cardLayout.show(mainPanel, "dashboard");
+            }
+        });
+
+        // Back button
+        JButton backButton = new JButton("Back to Dashboard");
+
+        // Add components to quiz panel
+        quizPanel.add(Box.createVerticalStrut(20));
+        quizPanel.add(titleLabel);
+        quizPanel.add(Box.createVerticalStrut(30));
+        quizPanel.add(questionLabel);
+        quizPanel.add(Box.createVerticalStrut(20));
+        quizPanel.add(optionsPanel);
+        quizPanel.add(Box.createVerticalStrut(20));
+        quizPanel.add(nextButton);
+        quizPanel.add(Box.createVerticalStrut(10));
+        quizPanel.add(resultLabel);
+        quizPanel.add(Box.createVerticalStrut(20));
+        quizPanel.add(backButton);
+
+        // Back button action
+        backButton.addActionListener(e -> cardLayout.show(mainPanel, "dashboard"));
+    }
+
+    private void displayQuestion(Quiz quiz, JLabel questionLabel, JPanel optionsPanel, ButtonGroup optionsGroup, JRadioButton[] optionButtons) {
+        Question currentQuestion = quiz.getCurrentQuestion();
+        if (currentQuestion != null) {
+            questionLabel.setText(currentQuestion.getQuestionText());
+
+            // Clear previous options
+            optionsPanel.removeAll();
+            optionsGroup.clearSelection();
+
+            // Add new options
+            List<String> options = currentQuestion.getOptions();
+            for (int i = 0; i < options.size(); i++) {
+                optionButtons[i] = new JRadioButton(options.get(i));
+                optionsGroup.add(optionButtons[i]);
+                optionsPanel.add(optionButtons[i]);
+            }
+
+            // Refresh panel
+            optionsPanel.revalidate();
+            optionsPanel.repaint();
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            EcoSparkApp app = new EcoSparkApp();
+            app.setVisible(true);
+        });
     }
 }

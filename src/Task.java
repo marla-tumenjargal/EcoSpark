@@ -9,17 +9,24 @@ class Task {
     private int id;
     private String title;
     private String description;
+    private String longDescription; // Added for detailed task info
     private int pointsValue;
     private boolean completed;
     private Date completionDate;
     private static int taskIdCounter = 1;
 
-    public Task(String title, String description, int pointsValue) {
+    public Task(String title, String description, String longDescription, int pointsValue) {
         this.id = taskIdCounter++;
         this.title = title;
         this.description = description;
+        this.longDescription = longDescription; // Initialize long description
         this.pointsValue = pointsValue;
         this.completed = false;
+    }
+
+    // Getters and setters
+    public String getLongDescription() {
+        return longDescription;
     }
 
     // Method to mark task as completed
@@ -33,6 +40,7 @@ class Task {
             System.out.println("This task has already been completed.");
         }
     }
+
 
     // Getters
     public int getId() {
@@ -71,17 +79,15 @@ class Task {
     public static List<Task> createTaskLibrary() {
         List<Task> taskLibrary = new ArrayList<>();
 
-        taskLibrary.add(new Task("Recycle a water bottle", "Collect and properly recycle plastic water bottles.", 5));
-        taskLibrary.add(new Task("Use reusable bags", "Bring your own reusable bags when shopping.", 10));
-        taskLibrary.add(new Task("Turn off lights", "Turn off lights when leaving a room to save energy.", 5));
-        taskLibrary.add(new Task("Walk or bike", "Choose walking or biking instead of driving for short trips.", 15));
-        taskLibrary.add(new Task("Plant a tree", "Plant a tree to help absorb CO2 from the atmosphere.", 50));
-        taskLibrary.add(new Task("Save water", "Take shorter showers to conserve water.", 10));
-        taskLibrary.add(new Task("Reduce meat consumption", "Have a meat-free day to reduce your carbon footprint.", 20));
-        taskLibrary.add(new Task("Use public transport", "Take public transportation instead of driving alone.", 25));
-        taskLibrary.add(new Task("Clean up litter", "Collect and dispose of litter in your neighborhood.", 30));
-        taskLibrary.add(new Task("Reduce plastic use", "Avoid single-use plastics for a day.", 15));
-
+        taskLibrary.add(new Task("Recycle a water bottle",
+                "Collect and properly recycle plastic water bottles.",
+                "Recycling plastic bottles helps reduce waste and conserve resources. Make sure to rinse the bottle before recycling.",
+                5));
+        taskLibrary.add(new Task("Use reusable bags",
+                "Bring your own reusable bags when shopping.",
+                "Using reusable bags reduces plastic waste and helps protect marine life. Keep a few bags in your car or bag for convenience.",
+                10));
+        // Add more tasks with long descriptions
         return taskLibrary;
     }
 }

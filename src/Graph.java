@@ -6,7 +6,6 @@ class Graph {
         System.out.println("Points earned: " + profile.getPoints());
         System.out.println("Tasks completed: " + profile.getTotalTasksCompleted());
 
-        // Simulated progress bar using ASCII characters
         int progressPercentage = Math.min(100, (profile.getPoints() / 10));
         System.out.print("Progress: [");
         for (int i = 0; i < 20; i++) {

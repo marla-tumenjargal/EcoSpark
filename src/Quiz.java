@@ -6,66 +6,44 @@ class Quiz {
     private String title;
     private String description;
     private List<Question> questions;
+    private int currentQuestionIndex;
 
     public Quiz(String title, String description) {
         this.title = title;
         this.description = description;
         this.questions = new ArrayList<>();
+        this.currentQuestionIndex = 0; // Initialize to the first question
     }
 
+    // Add a question to the quiz
     public void addQuestion(Question question) {
         questions.add(question);
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public List<Question> getQuestions() {
-        return questions;
-    }
-
-    // Display quiz information
-    public void displayQuizInfo() {
-        System.out.println("\n--- " + title + " ---");
-        System.out.println(description);
-        System.out.println("Number of questions: " + questions.size());
-    }
-
-    // Take the quiz and return results
-    public QuizResult takeQuiz(Scanner scanner) {
-        displayQuizInfo();
-        System.out.println("\nPress enter to start the quiz...");
-        scanner.nextLine();
-
-        QuizResult result = new QuizResult();
-
-        for (Question question : questions) {
-            question.displayQuestion();
-            System.out.print("\nYour answer (A, B, C, D): ");
-            char answer = scanner.nextLine().toUpperCase().charAt(0);
-
-            // Validate input
-            while (answer < 'A' || answer >= 'A' + question.getOptions().size()) {
-                System.out.println("Invalid option. Please try again.");
-                System.out.print("Your answer (A, B, C, D): ");
-                answer = scanner.nextLine().toUpperCase().charAt(0);
-            }
-
-            Response response = new Response(question, answer);
-            result.addResponse(response);
-
-            System.out.println("Answer recorded: " + answer);
+    // Get the current question
+    public Question getCurrentQuestion() {
+        if (currentQuestionIndex < questions.size()) {
+            return questions.get(currentQuestionIndex);
         }
+        return null; // No more questions
+    }
 
-        System.out.println("\nQuiz completed! Here are your results:");
-        result.displayResults();
+    // Move to the next question
+    public boolean nextQuestion() {
+        if (currentQuestionIndex < questions.size() - 1) {
+            currentQuestionIndex++;
+            return true; // Successfully moved to the next question
+        }
+        return false; // No more questions
+    }
 
-        return result;
+    // Check if the selected answer is correct
+    public boolean checkAnswer(char answer) {
+        Question currentQuestion = getCurrentQuestion();
+        if (currentQuestion != null) {
+            return currentQuestion.isCorrect(answer);
+        }
+        return false; // No current question
     }
 
     // Create a climate change quiz

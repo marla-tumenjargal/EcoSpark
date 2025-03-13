@@ -102,6 +102,7 @@ class QuizResult {
         return completionDate;
     }
 
+
     // Display quiz results
     public void displayResults() {
         System.out.println("\n--- Quiz Results ---");
