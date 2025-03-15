@@ -6,12 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Main class that implements input and output to the JFrame panel.
+ */
 public class EcoSparkApp extends JFrame {
     private Profile currentUser;
     private JPanel mainPanel;
     private CardLayout cardLayout;
 
-    // Panels
+    // set up the login panels
     private JPanel loginPanel;
     private JPanel registerPanel;
     private JPanel dashboardPanel;
@@ -21,8 +24,7 @@ public class EcoSparkApp extends JFrame {
     private JPanel quizPanel;
 
     public EcoSparkApp() {
-        // Set up the main window
-        setTitle("EcoSpark");
+        setTitle("🌲 EcoSpark 🌲");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);

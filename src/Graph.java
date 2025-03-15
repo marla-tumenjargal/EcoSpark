@@ -17,7 +17,6 @@ class Graph {
         }
         System.out.println("] " + progressPercentage + "%");
 
-        // Achievement levels
         if (profile.getPoints() < 50) {
             System.out.println("Achievement Level: Beginner Environmentalist");
         } else if (profile.getPoints() < 150) {

@@ -1,3 +1,4 @@
+
 class Profile extends User {
     private String name;
     private int age;
@@ -32,7 +33,6 @@ class Profile extends User {
         System.out.println("You have been logged out. Goodbye, " + name + "!");
     }
 
-    // Method to update profile information
     public void updateProfile(String name, int age, String gender) {
         this.name = name;
         this.age = age;
@@ -40,13 +40,11 @@ class Profile extends User {
         System.out.println("Profile updated successfully!");
     }
 
-    // Method to add points when tasks are completed
     public void addPoints(int points) {
         this.points += points;
         this.totalTasksCompleted++;
     }
 
-    // Getters and setters
     public String getName() {
         return name;
     }
@@ -82,17 +80,5 @@ class Profile extends User {
     public void setPassword(String password) {
         this.password = password;
         System.out.println("Password updated successfully!");
-    }
-
-    // Method to display profile information
-    public void displayProfile() {
-        System.out.println("\n--- Profile Information ---");
-        System.out.println("Name: " + name);
-        System.out.println("Age: " + age);
-        System.out.println("Gender: " + gender);
-        System.out.println("Email: " + email);
-        System.out.println("Points: " + points);
-        System.out.println("Tasks Completed: " + totalTasksCompleted);
-        System.out.println("--------------------------\n");
     }
 }

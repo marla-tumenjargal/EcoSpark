@@ -9,11 +9,9 @@ abstract class User {
         this.isLoggedIn = false;
     }
 
-    // Abstract methods to be implemented by subclasses
     public abstract boolean login(String email, String password);
     public abstract void logout();
 
-    // Getters and setters
     public String getEmail() {
         return email;
     }
@@ -24,5 +22,9 @@ abstract class User {
 
     public boolean isLoggedIn() {
         return isLoggedIn;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }
