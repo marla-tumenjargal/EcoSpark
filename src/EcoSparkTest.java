@@ -1,10 +1,6 @@
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
 
 public class EcoSparkTest extends JFrame {
 
@@ -66,54 +62,6 @@ public class EcoSparkTest extends JFrame {
         add(scrollPane);
         setVisible(true);
     }
-
-    private void createDashboardPanel() {
-        // Remove the current panel
-        Component currentComponent = getContentPane().getComponent(0);
-        getContentPane().remove(currentComponent);
-
-        // Create dashboard panel
-        dashboardPanel = new JPanel(new BorderLayout());
-        dashboardPanel.setBackground(Color.WHITE);
-
-        JLabel welcomeLabel = new JLabel("Welcome to your Dashboard, " +
-                (currentUser != null ? currentUser.getName() : "User") + "!");
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
-        welcomeLabel.setBorder(BorderFactory.createEmptyBorder(50, 0, 30, 0));
-
-        JPanel contentPanel = new JPanel();
-        contentPanel.setBackground(Color.WHITE);
-        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-
-        JLabel infoLabel = new JLabel("You are now logged in to EcoSpark.");
-        infoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        infoLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-
-        JButton logoutButton = new JButton("Logout");
-        logoutButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        logoutButton.setMaximumSize(new Dimension(120, 40));
-        logoutButton.addActionListener(e -> {
-            // Remove dashboard and restore main panel
-            getContentPane().remove(dashboardPanel);
-            getContentPane().add(scrollPane);
-            revalidate();
-            repaint();
-        });
-
-        contentPanel.add(infoLabel);
-        contentPanel.add(Box.createVerticalStrut(30));
-        contentPanel.add(logoutButton);
-
-        dashboardPanel.add(welcomeLabel, BorderLayout.NORTH);
-        dashboardPanel.add(contentPanel, BorderLayout.CENTER);
-
-        // Add dashboard to frame and refresh
-        getContentPane().add(dashboardPanel);
-        revalidate();
-        repaint();
-    }
-
 
     private void createRegisterPanel() {
         // Remove the existing mainPanel and scrollPane
@@ -198,7 +146,7 @@ public class EcoSparkTest extends JFrame {
                 passwordField.setText("");
 
                 // Create and show dashboard
-                createDashboardPanel();
+                createHeroSection();
             } else {
                 statusLabel.setText("Registration failed. Please fill in all fields.");
                 statusLabel.setForeground(Color.RED);
@@ -293,7 +241,7 @@ public class EcoSparkTest extends JFrame {
                 passwordField.setText("");
 
                 // Create and show dashboard
-                createDashboardPanel();
+                createHeroSection();
             } else {
                 statusLabel.setText("Login failed. Please check your credentials.");
                 statusLabel.setForeground(Color.RED);
@@ -356,7 +304,7 @@ public class EcoSparkTest extends JFrame {
 
         JButton profileButton = new JButton();
         try {
-            ImageIcon profileIcon = new ImageIcon(new ImageIcon(getClass().getResource("/profile_icon.png"))
+            ImageIcon profileIcon = new ImageIcon(new ImageIcon(getClass().getResource("/com/hillcrest/visuals/profile_icon.png"))
                     .getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
             profileButton.setIcon(profileIcon);
         } catch (Exception e) {
@@ -506,7 +454,7 @@ public class EcoSparkTest extends JFrame {
 
         JLabel imageLabel = new JLabel();
         try {
-            ImageIcon homeGraphic = new ImageIcon(new ImageIcon(getClass().getResource("/homepagegraphic.png"))
+            ImageIcon homeGraphic = new ImageIcon(new ImageIcon(getClass().getResource("/com/hillcrest/visuals/homepagegraphic.png"))
                     .getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH));
             imageLabel.setIcon(homeGraphic);
         } catch (Exception e) {
@@ -548,13 +496,13 @@ public class EcoSparkTest extends JFrame {
         offerCards.setBorder(new EmptyBorder(30, 0, 0, 0));
 
         // Card 1: Carbon Footprint Calculator (as clickable button)
-        JPanel card1 = createOfferCardButton("Carbon Footprint Calculator", "/carbon_footprint_button_graphic.png", PRIMARY_COLOR);
+        JPanel card1 = createOfferCardButton("Carbon Footprint Calculator", "/com/hillcrest/visuals/carbon_footprint_button_graphic.png", PRIMARY_COLOR);
 
         // Card 2: Informative Resources
         JPanel card2 = createOfferCard("Informative Resources", null, SECONDARY_COLOR);
 
         // Card 3: Personalized Actions
-        JPanel card3 = createOfferCard("Personalized Actions", "/take_action.png", PRIMARY_COLOR);
+        JPanel card3 = createOfferCard("Personalized Actions", "/com/hillcrest/visuals/take_action.png", PRIMARY_COLOR);
 
         offerCards.add(card1);
         offerCards.add(Box.createRigidArea(new Dimension(15, 0)));
@@ -754,7 +702,7 @@ public class EcoSparkTest extends JFrame {
 
         JLabel imageLabel = new JLabel();
         try {
-            ImageIcon aboutGraphic = new ImageIcon(new ImageIcon(getClass().getResource("/about_ecospark_graphic.png"))
+            ImageIcon aboutGraphic = new ImageIcon(new ImageIcon(getClass().getResource("/com/hillcrest/visuals/about_ecospark_graphic.png"))
                     .getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH));
             imageLabel.setIcon(aboutGraphic);
         } catch (Exception e) {
@@ -915,14 +863,6 @@ public class EcoSparkTest extends JFrame {
     }
 
     public static void main(String[] args) {
-        // Set the look and feel to the system default
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            System.out.println("Error setting look and feel: " + e.getMessage());
-        }
-
-        // Create and display the application
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 new EcoSparkTest();
